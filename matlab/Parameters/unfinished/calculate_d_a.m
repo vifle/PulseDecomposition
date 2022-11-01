@@ -1,4 +1,4 @@
-function [b_a] = calculate_b_a(PPGmod,PPGbeat,y,opt_params,algorithmName,freq)
+function [d_a] = calculate_d_a(PPGmod,PPGbeat,y,opt_params,algorithmName,freq)
 % input:
 % PPGmod            ...     PPG beat modeled by kernels
 % PPGbeat           ...     beat of PPG signal that is to be decomposed
@@ -8,30 +8,30 @@ function [b_a] = calculate_b_a(PPGmod,PPGbeat,y,opt_params,algorithmName,freq)
 % freq              ...     sampling frequency of input signal
 %
 % outputs:
-% b_a               ...     amplitude of b wave of the second derivative of 
+% d_a               ...     amplitude of d wave of the second derivative of 
 %                           a PPG beat over the amplitude of the a wave
 
 %% exceptions
 if(any(isnan(PPGmod)))
-    b_a = NaN;
+    d_a = NaN;
     return
 end
 
 %% calculate b over a
 second_deriv = deriv2(PPGmod);
 a = max(second_deriv); % find a
-b = min(second_deriv); % find b
-b_a = b/a; % calculate b over a
+d = min(second_deriv); % find d
+d_a = d/a; % calculate d over a
 
 %% verification
-% b should come after a
-t = 0:1/freq:(length(second_deriv)-1)/freq;
+% d should come after a
+t = 0:1/freq:(length(second_deriv)-1);
 t_a = t(second_deriv==a);
 t_a = t_a(1);
-t_b = t(second_deriv==b);
-t_b = t_b(1);
-if(t_a > t_b)
-    b_a = NaN;
+t_d = t(second_deriv==d); % this only works if i really search for the absolute minimum, for d this does not work
+t_d = t_d(1);
+if(t_a > t_d)
+    d_a = NaN;
 end
 
 end

@@ -1,4 +1,4 @@
-function [SD] = calculate_SD(PPGmod,PPGbeat,y,opt_params,algorithmName,freq)
+function [AmpCatacrot] = calculate_AmpCatacrot(PPGmod,PPGbeat,y,opt_params,algorithmName,freq)
 % input:
 % PPGmod            ...     PPG beat modeled by kernels
 % PPGbeat           ...     beat of PPG signal that is to be decomposed
@@ -8,15 +8,17 @@ function [SD] = calculate_SD(PPGmod,PPGbeat,y,opt_params,algorithmName,freq)
 % freq              ...     sampling frequency of input signal
 %
 % outputs:
-% SD                ...     standard deviation of PPGbeat
+% AmpCatacrot       ...     amplitude of peak of PPG in catacrotic phase
 
 %% exceptions
-if(any(isnan(PPGmod)))
-    SD = NaN;
+% PPGbeat contains NaN
+if(any(isnan(PPGbeat)))
+    AmpCatacrot = NaN;
     return
 end
 
-%% calculate standard deviation
-SD = std(PPGmod);
+%% calculate amplitude of peak in anacrotic phase
+% use find peaks to find two peaks?
+% use some derivative?
 
 end

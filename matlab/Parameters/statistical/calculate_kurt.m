@@ -17,6 +17,6 @@ if(any(isnan(PPGmod)))
 end
 
 %% calculate kurtosis
-kurt = kurtosis(PPGbeat);
+kurt = kurtosis(PPGmod);
 
 end

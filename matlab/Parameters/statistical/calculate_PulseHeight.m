@@ -1,4 +1,4 @@
-function [SD] = calculate_SD(PPGmod,PPGbeat,y,opt_params,algorithmName,freq)
+function [PulseHeight] = calculate_PulseHeight(PPGmod,PPGbeat,y,opt_params,algorithmName,freq)
 % input:
 % PPGmod            ...     PPG beat modeled by kernels
 % PPGbeat           ...     beat of PPG signal that is to be decomposed
@@ -8,15 +8,15 @@ function [SD] = calculate_SD(PPGmod,PPGbeat,y,opt_params,algorithmName,freq)
 % freq              ...     sampling frequency of input signal
 %
 % outputs:
-% SD                ...     standard deviation of PPGbeat
+% PulseHeight       ...     height of PPGbeat in a.u.
 
 %% exceptions
-if(any(isnan(PPGmod)))
-    SD = NaN;
+if(any(isnan(PPGbeat)))
+    PulseHeight = NaN;
     return
 end
 
-%% calculate standard deviation
-SD = std(PPGmod);
+%% calculate pulse width
+PulseHeight = max(PPGbeat) - min(PPGbeat);
 
 end

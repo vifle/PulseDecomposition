@@ -1,4 +1,4 @@
-function [b_a] = calculate_b_a(PPGmod,PPGbeat,y,opt_params,algorithmName,freq)
+function [c_a] = calculate_c_a(inputArg1,inputArg2)
 % input:
 % PPGmod            ...     PPG beat modeled by kernels
 % PPGbeat           ...     beat of PPG signal that is to be decomposed
@@ -8,7 +8,7 @@ function [b_a] = calculate_b_a(PPGmod,PPGbeat,y,opt_params,algorithmName,freq)
 % freq              ...     sampling frequency of input signal
 %
 % outputs:
-% b_a               ...     amplitude of b wave of the second derivative of 
+% c_a               ...     amplitude of c wave of the second derivative of 
 %                           a PPG beat over the amplitude of the a wave
 
 %% exceptions
@@ -25,7 +25,7 @@ b_a = b/a; % calculate b over a
 
 %% verification
 % b should come after a
-t = 0:1/freq:(length(second_deriv)-1)/freq;
+t = 0:1/freq:(length(second_deriv)-1);
 t_a = t(second_deriv==a);
 t_a = t_a(1);
 t_b = t(second_deriv==b);
