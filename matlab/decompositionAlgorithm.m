@@ -237,6 +237,14 @@ end
         gaussian = (x(1)*exp(-(t_ppg-x(2)).^2/(2*x(3)^2)));
     end
 
+% LogNormal kernel
+% TODO: how to do amplitude?
+    function lognormal = lognormal(x,t_ppg)
+        lognormal = (x(1)*exp(-(t_ppg-x(2)).^2/(2*x(3)^2)));
+    end
+
+% Rayleigh kernel
+
 % kernel composition
     function [g,kernels,errorFlag] = createKernels(t_ppg,kernelTypes,numKernels)
         if strcmp(kernelTypes,'Gamma')
