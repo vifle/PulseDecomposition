@@ -178,14 +178,14 @@ while(1)
             end
             numKernels=varargin{i+1};
         case 'kernelTypes'
-            allowedTypes = {'Gamma','GammaGaussian','Gaussian'};
+            allowedTypes = {'Gamma','GammaGaussian','Gaussian','LogNormal','Rayleigh'};
             if(~ischar(varargin{i+1}))
                 errordlg('Kernel types need to be char',...
                     'Input Error','modal');
                 return;
             end
             if(~ismember(varargin{i+1},allowedTypes))
-                errordlg('Kernel types need to be either Gamma, GammaGaussian or Gaussian',...
+                errordlg('Kernel types need to be either Gamma, GammaGaussian, Gaussian, LogNormal or Rayleigh',...
                     'Input Error','modal');
                 return;
             end
@@ -239,6 +239,7 @@ end
 
 % LogNormal kernel
 % TODO: how to do amplitude?
+% TODO: like gamma calculate parameters of kernel by means of mode and such
     function lognormal = lognormal(x,t_ppg)
         lognormal = (x(1)*exp(-(t_ppg-x(2)).^2/(2*x(3)^2)));
     end
