@@ -78,6 +78,8 @@ function [signal_mod,y,opt_val_sort] = decompositionAlgorithm(ppg_signal,freq,va
 % - test comparison between old Gamma4 and Gamma4 with this function
 % - test speed differences between old and new version
 % - give a more detailed description in doc string
+% - return nan rather than false when choosing unsupproted kernel type? 
+% - kernel composition section
 
 %% check input arguments
 % both signal and sampling frequency are needed
@@ -238,10 +240,20 @@ end
     end
 
 % LogNormal kernel
-% TODO: how to do amplitude?
-% TODO: like gamma calculate parameters of kernel by means of mode and such
+    function mu = mu(x)
+        mu = (log(x(3))+log(x(2))+0.5)/2;
+    end
+
+    function sig = sig(x)
+        sig = sqrt((log(x(3))-log(x(2))+0.5)/(2));
+    end
+
+    function p = p(x,t_ppg)
+        p = x(1)/max(lognpdf(t_ppg,mu(x),sig(x)));
+    end
+
     function lognormal = lognormal(x,t_ppg)
-        lognormal = (x(1)*exp(-(t_ppg-x(2)).^2/(2*x(3)^2)));
+        lognormal = lognpdf(t_ppg,mu(x),sig(x))*p(x);
     end
 
 % Rayleigh kernel
@@ -322,6 +334,36 @@ end
             elseif numKernels == 3
                 g=@(x) gaussian(x(1:3),t_ppg)+gaussian(x(4:6),t_ppg)+gaussian(x(7:9),t_ppg);
                 kernels=@(x) [gaussian(x(1:3),t_ppg);gaussian(x(4:6),t_ppg);gaussian(x(7:9),t_ppg)];
+                errorFlag = false;
+            elseif numKernels == 4
+                g=@(x) gaussian(x(1:3),t_ppg)+gaussian(x(4:6),t_ppg)+gaussian(x(7:9),t_ppg)+gaussian(x(10:12),t_ppg);
+                kernels=@(x) [gaussian(x(1:3),t_ppg);gaussian(x(4:6),t_ppg);gaussian(x(7:9),t_ppg);gaussian(x(10:12),t_ppg)];
+                errorFlag = false;
+            elseif numKernels == 5
+                g=@(x) gaussian(x(1:3),t_ppg)+gaussian(x(4:6),t_ppg)+gaussian(x(7:9),t_ppg)+gaussian(x(10:12),t_ppg)+gaussian(x(13:15),t_ppg);
+                kernels=@(x) [gaussian(x(1:3),t_ppg);gaussian(x(4:6),t_ppg);gaussian(x(7:9),t_ppg);gaussian(x(10:12),t_ppg);gaussian(x(13:15),t_ppg)];
+                errorFlag = false;
+            else
+                g = false;
+                kernels = false;
+                errorFlag = true;
+                errordlg('Too many kernels','Input Error','modal');
+                return;
+            end
+        elseif strcmp(kernelTypes,'LogNormal')
+            if numKernels == 1
+                g = false;
+                kernels = false;
+                errorFlag = true;
+                errordlg('Too few kernels','Input Error','modal');
+                return;
+            elseif numKernels == 2
+                g=@(x) lognormal(x(1:3),t_ppg)+lognormal(x(4:6),t_ppg);
+                kernels=@(x) [lognormal(x(1:3),t_ppg);lognormal(x(4:6),t_ppg)];
+                errorFlag = false;
+            elseif numKernels == 3
+                g=@(x) lognormal(x(1:3),t_ppg)+lognormal(x(4:6),t_ppg)+lognormal(x(7:9),t_ppg);
+                kernels=@(x) [lognormal(x(1:3),t_ppg);lognormal(x(4:6),t_ppg);lognormal(x(7:9),t_ppg)];
                 errorFlag = false;
             elseif numKernels == 4
                 g=@(x) gaussian(x(1:3),t_ppg)+gaussian(x(4:6),t_ppg)+gaussian(x(7:9),t_ppg)+gaussian(x(10:12),t_ppg);
