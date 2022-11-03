@@ -253,7 +253,7 @@ end
     end
 
     function lognormal = lognormal(x,t_ppg)
-        lognormal = lognpdf(t_ppg,mu(x),sig(x))*p(x);
+        lognormal = lognpdf(t_ppg,mu(x),sig(x))*p(x,t_ppg);
     end
 
 % Rayleigh kernel

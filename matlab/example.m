@@ -3,9 +3,9 @@ close all
 clc
 
 %% settings
-path = 'C:\Users\vince\sciebo\Forschung\Datasets\PPG_DFG_BP_Studie'; % path to data
+path = 'C:\Users\vifle001\sciebo\Forschung\Datasets\PPG_DFG_BP_Studie'; % path to data
 numKernels = 3;
-kernelTypes = 'GammaGaussian';
+kernelTypes = 'LogNormal';
 method = 'generic';
 normOut = false;
 parameterList = {'b_a','T1'};
