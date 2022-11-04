@@ -5,7 +5,7 @@ clc
 %% settings
 path = 'C:\Users\vifle001\sciebo\Forschung\Datasets\PPG_DFG_BP_Studie'; % path to data
 numKernels = 3;
-kernelTypes = 'Gamma';
+kernelTypes = 'RayleighGaussian';
 method = 'generic';
 normOut = false;
 parameterList = {'b_a','T1'};

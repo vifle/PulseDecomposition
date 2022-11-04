@@ -25,7 +25,8 @@ function [signal_mod,y,opt_val_sort] = decompositionAlgorithm(ppg_signal,freq,va
 %                       'kernelTypes' - determines the types of kernels
 %                       used for the decomposition. Allowed are the
 %                       following types: 'Gamma', 'Gaussian',
-%                       'GammaGaussian' (default: 'GammaGaussian')
+%                       'GammaGaussian', 'LogNormal', 'Rayleigh',
+%                       'RayleighGaussian' (default: 'GammaGaussian')
 %                       type: char
 %
 %                       'method' - determines the method for getting the
@@ -180,7 +181,7 @@ while(1)
             end
             numKernels=varargin{i+1};
         case 'kernelTypes'
-            allowedTypes = {'Gamma','GammaGaussian','Gaussian','LogNormal','Rayleigh'};
+            allowedTypes = {'Gamma','GammaGaussian','Gaussian','LogNormal','Rayleigh','RayleighGaussian'};
             if(~ischar(varargin{i+1}))
                 errordlg('Kernel types need to be char',...
                     'Input Error','modal');
@@ -417,6 +418,36 @@ end
             elseif numKernels == 5
                 g=@(x) rayleigh(x(1:3),t_ppg)+rayleigh(x(4:6),t_ppg)+rayleigh(x(7:9),t_ppg)+rayleigh(x(10:12),t_ppg)+rayleigh(x(13:15),t_ppg);
                 kernels=@(x) [rayleigh(x(1:3),t_ppg);rayleigh(x(4:6),t_ppg);rayleigh(x(7:9),t_ppg);rayleigh(x(10:12),t_ppg);rayleigh(x(13:15),t_ppg)];
+                errorFlag = false;
+            else
+                g = false;
+                kernels = false;
+                errorFlag = true;
+                errordlg('Too many kernels','Input Error','modal');
+                return;
+            end
+        elseif strcmp(kernelTypes,'RayleighGaussian')
+            if numKernels == 1
+                g = false;
+                kernels = false;
+                errorFlag = true;
+                errordlg('Too few kernels','Input Error','modal');
+                return;
+            elseif numKernels == 2
+                g=@(x) rayleigh(x(1:3),t_ppg)+gaussian(x(4:6),t_ppg);
+                kernels=@(x) [rayleigh(x(1:3),t_ppg);gaussian(x(4:6),t_ppg)];
+                errorFlag = false;
+            elseif numKernels == 3
+                g=@(x) rayleigh(x(1:3),t_ppg)+gaussian(x(4:6),t_ppg)+gaussian(x(7:9),t_ppg);
+                kernels=@(x) [rayleigh(x(1:3),t_ppg);gaussian(x(4:6),t_ppg);gaussian(x(7:9),t_ppg)];
+                errorFlag = false;
+            elseif numKernels == 4
+                g=@(x) rayleigh(x(1:3),t_ppg)+gaussian(x(4:6),t_ppg)+gaussian(x(7:9),t_ppg)+gaussian(x(10:12),t_ppg);
+                kernels=@(x) [rayleigh(x(1:3),t_ppg);gaussian(x(4:6),t_ppg);gaussian(x(7:9),t_ppg);gaussian(x(10:12),t_ppg)];
+                errorFlag = false;
+            elseif numKernels == 5
+                g=@(x) rayleigh(x(1:3),t_ppg)+gaussian(x(4:6),t_ppg)+gaussian(x(7:9),t_ppg)+gaussian(x(10:12),t_ppg)+gaussian(x(13:15),t_ppg);
+                kernels=@(x) [rayleigh(x(1:3),t_ppg);gaussian(x(4:6),t_ppg);gaussian(x(7:9),t_ppg);gaussian(x(10:12),t_ppg);gaussian(x(13:15),t_ppg)];
                 errorFlag = false;
             else
                 g = false;
