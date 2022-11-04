@@ -5,7 +5,7 @@ clc
 %% settings
 path = 'C:\Users\vifle001\sciebo\Forschung\Datasets\PPG_DFG_BP_Studie'; % path to data
 numKernels = 3;
-kernelTypes = 'LogNormal';
+kernelTypes = 'Gamma';
 method = 'generic';
 normOut = false;
 parameterList = {'b_a','T1'};
@@ -59,7 +59,7 @@ for currentBeat = 1:numel(singleBeatsProcessed)
             'numKernels',numKernels,'kernelTypes',kernelTypes,'method',method,'normalizeOutput',normOut);
         [parameters{currentBeat,1:numel(parameterList)}] = calculateParameter(signal_mod,singleBeatsProcessed{currentBeat},y,opt_val_sort,[kernelTypes,numKernels],ppgSignalSampleRate,parameterList);
         figure('name',num2str(currentBeat))
-        plot(normalize(deriv2(signal_mod)))
+        %plot(normalize(deriv2(signal_mod)))
         hold on
         plot(normalize(singleBeatsProcessed{currentBeat}))
         plot(normalize(signal_mod))

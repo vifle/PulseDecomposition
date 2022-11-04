@@ -240,23 +240,38 @@ end
     end
 
 % LogNormal kernel
-    function mu = mu(x)
-        mu = (log(x(3))+log(x(2))+0.5)/2;
+    function mu_ln = mu_ln(x)
+        mu_ln = (log(x(3))+log(x(2))+0.5)/2;
     end
 
-    function sig = sig(x)
-        sig = sqrt((log(x(3))-log(x(2))+0.5)/(2));
+    function sig_ln = sig_ln(x)
+        sig_ln = sqrt((log(x(3))-log(x(2))+0.5)/(2));
     end
 
-    function p = p(x,t_ppg)
-        p = x(1)/max(lognpdf(t_ppg,mu(x),sig(x)));
+    function p_ln = p_ln(x,t_ppg)
+        p_ln = x(1)/max(lognpdf(t_ppg,mu_ln(x),sig_ln(x)));
     end
 
     function lognormal = lognormal(x,t_ppg)
-        lognormal = lognpdf(t_ppg,mu(x),sig(x))*p(x,t_ppg);
+        lognormal = lognpdf(t_ppg,mu_ln(x),sig_ln(x))*p_ln(x,t_ppg);
     end
 
 % Rayleigh kernel
+    function mu_ray = mu_ray(x)
+        mu_ray = x(2)-(x(3)/(sqrt(2-(pi/2))));
+    end
+
+    function sig_ray = sig_ray(x)
+        sig_ray = x(3)/(sqrt(2-(pi/2)));
+    end
+
+    function p_ray = p_ray(x)
+        p_ray = x(1)*sig_ray(x)*exp(0.5);
+    end
+
+    function rayleigh = rayleigh(x,t_ppg)
+        rayleigh = raylpdf(t_ppg-mu_ray(x),sig_ray(x))*p_ray(x);
+    end
 
 % kernel composition
     function [g,kernels,errorFlag] = createKernels(t_ppg,kernelTypes,numKernels)
@@ -366,12 +381,42 @@ end
                 kernels=@(x) [lognormal(x(1:3),t_ppg);lognormal(x(4:6),t_ppg);lognormal(x(7:9),t_ppg)];
                 errorFlag = false;
             elseif numKernels == 4
-                g=@(x) gaussian(x(1:3),t_ppg)+gaussian(x(4:6),t_ppg)+gaussian(x(7:9),t_ppg)+gaussian(x(10:12),t_ppg);
-                kernels=@(x) [gaussian(x(1:3),t_ppg);gaussian(x(4:6),t_ppg);gaussian(x(7:9),t_ppg);gaussian(x(10:12),t_ppg)];
+                g=@(x) lognormal(x(1:3),t_ppg)+lognormal(x(4:6),t_ppg)+lognormal(x(7:9),t_ppg)+lognormal(x(10:12),t_ppg);
+                kernels=@(x) [lognormal(x(1:3),t_ppg);lognormal(x(4:6),t_ppg);lognormal(x(7:9),t_ppg);lognormal(x(10:12),t_ppg)];
                 errorFlag = false;
             elseif numKernels == 5
-                g=@(x) gaussian(x(1:3),t_ppg)+gaussian(x(4:6),t_ppg)+gaussian(x(7:9),t_ppg)+gaussian(x(10:12),t_ppg)+gaussian(x(13:15),t_ppg);
-                kernels=@(x) [gaussian(x(1:3),t_ppg);gaussian(x(4:6),t_ppg);gaussian(x(7:9),t_ppg);gaussian(x(10:12),t_ppg);gaussian(x(13:15),t_ppg)];
+                g=@(x) lognormal(x(1:3),t_ppg)+lognormal(x(4:6),t_ppg)+lognormal(x(7:9),t_ppg)+lognormal(x(10:12),t_ppg)+lognormal(x(13:15),t_ppg);
+                kernels=@(x) [lognormal(x(1:3),t_ppg);lognormal(x(4:6),t_ppg);lognormal(x(7:9),t_ppg);lognormal(x(10:12),t_ppg);lognormal(x(13:15),t_ppg)];
+                errorFlag = false;
+            else
+                g = false;
+                kernels = false;
+                errorFlag = true;
+                errordlg('Too many kernels','Input Error','modal');
+                return;
+            end
+        elseif strcmp(kernelTypes,'Rayleigh')
+            if numKernels == 1
+                g = false;
+                kernels = false;
+                errorFlag = true;
+                errordlg('Too few kernels','Input Error','modal');
+                return;
+            elseif numKernels == 2
+                g=@(x) rayleigh(x(1:3),t_ppg)+rayleigh(x(4:6),t_ppg);
+                kernels=@(x) [rayleigh(x(1:3),t_ppg);rayleigh(x(4:6),t_ppg)];
+                errorFlag = false;
+            elseif numKernels == 3
+                g=@(x) rayleigh(x(1:3),t_ppg)+rayleigh(x(4:6),t_ppg)+rayleigh(x(7:9),t_ppg);
+                kernels=@(x) [rayleigh(x(1:3),t_ppg);rayleigh(x(4:6),t_ppg);rayleigh(x(7:9),t_ppg)];
+                errorFlag = false;
+            elseif numKernels == 4
+                g=@(x) rayleigh(x(1:3),t_ppg)+rayleigh(x(4:6),t_ppg)+rayleigh(x(7:9),t_ppg)+rayleigh(x(10:12),t_ppg);
+                kernels=@(x) [rayleigh(x(1:3),t_ppg);rayleigh(x(4:6),t_ppg);rayleigh(x(7:9),t_ppg);rayleigh(x(10:12),t_ppg)];
+                errorFlag = false;
+            elseif numKernels == 5
+                g=@(x) rayleigh(x(1:3),t_ppg)+rayleigh(x(4:6),t_ppg)+rayleigh(x(7:9),t_ppg)+rayleigh(x(10:12),t_ppg)+rayleigh(x(13:15),t_ppg);
+                kernels=@(x) [rayleigh(x(1:3),t_ppg);rayleigh(x(4:6),t_ppg);rayleigh(x(7:9),t_ppg);rayleigh(x(10:12),t_ppg);rayleigh(x(13:15),t_ppg)];
                 errorFlag = false;
             else
                 g = false;
