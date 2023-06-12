@@ -26,8 +26,9 @@ def beatDetectionLazaro(ppg,fs,DEBUG=False):
     a = np.concatenate((np.ones((1)),np.zeros((len(b)-1))))
     df= (b,a)
     # NOTE: group delay in matlab calculated differently though python way is implemented
+    # 12.06.2023: group_delay seems to have changed
     _,gd = sig.group_delay(df)
-    delay = round(np.mean(gd))
+    delay = round(np.mean(gd[1:])) # changed this from gd to gd[1:] as first sample in gd is unreasonable
     deriv = sig.lfilter(-b,a,np.concatenate((ppg,np.zeros((1,delay))),axis=None))
     deriv = deriv[delay:]
     
