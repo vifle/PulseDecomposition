@@ -21,7 +21,7 @@ if __name__ == "__main__":
     kernelTypes = 'RayleighGaussian';
     method = 'generic';
     normOut = False;
-    parameterList = ['b_a','T1'];
+    parameterList = ['b_a','SystolicPeak'];
     
     # include directories
     dataDirectory = '../data/' # directory where data folders are currently stored
@@ -42,8 +42,12 @@ if __name__ == "__main__":
     decompositionResults = dict()
     parameters = [[] for x in range(len(parameterList))]
     for indBeat,currentBeat in enumerate(singleBeatsProcessed):
-        if singleBeatsProcessed(currentBeat):
+        if singleBeatsProcessed[indBeat] is not None: 
             signalRec,y,optVal,normBeat = bDec.decompositionAlgorithm(currentBeat,sampleRate,numKernels=numKernels,kernelTypes=kernelTypes,method=method)
+            pwaParams = pwa.getPWAparams(currentBeat,sampleRate)
+            for indParameter,currentParameter in enumerate(parameterList):
+                parameters[indParameter].append(pwaParams[parameterList[indParameter]])
+                
             
     
     
