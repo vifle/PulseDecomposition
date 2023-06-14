@@ -1,5 +1,6 @@
 import numpy as np
 from scipy import signal as sig
+from scipy import stats as stats
 import beatDecomposition as bDec
 import helperFuns
 
@@ -143,8 +144,31 @@ def get_b_a(PPGmod,PPGbeat,y,opt_params,freq):
 """
 statistical
 """
+def get_kurt(PPGmod,PPGbeat,y,opt_params,freq):
+    kurt = stats.kurtosis(PPGmod)
+    return kurt
+    
+def get_skew(PPGmod,PPGbeat,y,opt_params,freq):
+    skew = stats.skew(PPGmod)
+    return skew
 
+def get_SD(PPGmod,PPGbeat,y,opt_params,freq):
+    SD = np.std(PPGmod)
+    return SD
 
+def get_PulseHeight(PPGmod,PPGbeat,y,opt_params,freq):
+    PulseHeight = max(PPGbeat) - min(PPGbeat)
+    return PulseHeight
+
+def get_PulseWidth(PPGmod,PPGbeat,y,opt_params,freq):
+    t = np.arange(len(PPGbeat))/freq
+    PulseWidth = t[-1];
+    return PulseWidth
+    
+
+"""
+original functions
+"""
 def getSystolicPeak(beat):
     # get index of first highest maximum
     peaks,_ = sig.find_peaks(beat)
