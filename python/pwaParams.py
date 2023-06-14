@@ -12,6 +12,8 @@ add to all arguments algorithm name!
 
 """
 decomposition
+missing: T_sys_dia, T_sys_dia_geometric, T_sys_dia_geometricZero, T_sys_diaMode,
+RI_area,RI_peaks
 """
 def get_P1(PPGmod,PPGbeat,y,opt_params,freq):
     numKernels = len(opt_params)
