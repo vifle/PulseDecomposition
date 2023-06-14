@@ -3,6 +3,125 @@ from scipy import signal as sig
 import beatDecomposition as bDec
 import helperFuns
 
+"""
+change function names and add all arguments
+adopt matlab conventions for now
+add to all arguments algorithm name!
+"""
+
+"""
+decomposition
+"""
+def get_P1(PPGmod,PPGbeat,y,opt_params,freq):
+    numKernels = len(opt_params)
+    if numKernels > 0:
+        P1 = max(y[1])
+    else:
+        P1 = None
+    return P1
+
+def get_P2(PPGmod,PPGbeat,y,opt_params,freq):
+    numKernels = len(opt_params)
+    if numKernels > 1:
+        P2 = max(y[2])
+    else:
+        P2 = None
+    return P2
+
+def get_P3(PPGmod,PPGbeat,y,opt_params,freq):
+    numKernels = len(opt_params)
+    if numKernels > 2:
+        P3 = max(y[3])
+    else:
+        P3 = None
+    return P3
+
+def get_T1(PPGmod,PPGbeat,y,opt_params,freq):
+    numKernels = len(opt_params)
+    if numKernels > 0:
+        T1 = opt_params[2]
+    else:
+        T1 = None
+    return T1
+
+def get_T2(PPGmod,PPGbeat,y,opt_params,freq):
+    numKernels = len(opt_params)
+    if numKernels > 1:
+        T2 = opt_params[5]
+    else:
+        T2 = None
+    return T2
+
+def get_T3(PPGmod,PPGbeat,y,opt_params,freq):
+    numKernels = len(opt_params)
+    if numKernels > 2:
+        T3 = opt_params[8]
+    else:
+        T3 = None
+    return T3
+
+def get_W1(PPGmod,PPGbeat,y,opt_params,freq):
+    numKernels = len(opt_params)
+    if numKernels > 0:
+        W1 = opt_params[3]
+    else:
+        W1 = None
+    return W1
+
+def get_W2(PPGmod,PPGbeat,y,opt_params,freq):
+    numKernels = len(opt_params)
+    if numKernels > 1:
+        W2 = opt_params[6]
+    else:
+        W2 = None
+    return W2
+
+def get_W3(PPGmod,PPGbeat,y,opt_params,freq):
+    numKernels = len(opt_params)
+    if numKernels > 2:
+        W3 = opt_params[9]
+    else:
+        W3 = None
+    return W3
+
+"""
+first derivative
+"""
+def get_p(PPGmod,PPGbeat,y,opt_params,freq):
+    first_deriv = helperFuns.deriv1(PPGmod)
+    p = max(first_deriv)
+    return p
+
+"""
+frequency
+"""
+
+
+"""
+second derivative
+"""
+def get_a(PPGmod,PPGbeat,y,opt_params,freq):
+    second_deriv = helperFuns.deriv2(PPGmod)
+    a = max(second_deriv)
+    b = min(second_deriv)
+    
+    return p
+
+def get_b(PPGmod,PPGbeat,y,opt_params,freq):
+    second_deriv = helperFuns.deriv1(PPGmod)
+    p = max(first_deriv)
+    return p
+
+def get_b_a(PPGmod,PPGbeat,y,opt_params,freq):
+    second_deriv = helperFuns.deriv1(PPGmod)
+    p = max(first_deriv)
+    return p
+
+"""
+statistical
+"""
+
+
 def getSystolicPeak(beat):
     # get index of first highest maximum
     peaks,_ = sig.find_peaks(beat)
@@ -377,3 +496,26 @@ def getPWAparams(beat,sampFreq):
                 "b_a":None
                 }
     return pwaParams
+
+def nargout(*args):
+   import traceback
+   callInfo = traceback.extract_stack()
+   callLine = str(callInfo[-3].line)
+   split_equal = callLine.split('=')
+   split_comma = split_equal[0].split(',')
+   num = len(split_comma)
+   return args[0:num] if num > 1 else args[0]
+
+def varargout(inputList):
+    num = len(inputList)
+    return inputList[0:num] if num > 1 else inputList[0]
+
+def calculateParameter(PPGmod,PPGbeat,y,opt_params,freq,parameterList):
+    returnParameterList = list()
+    for actualParameter in parameterList:
+        if 'get_'+actualParameter in globals():
+            returnParameter = globals()['get_'+actualParameter](PPGmod,PPGbeat,y,opt_params,freq)
+        else:
+            returnParameter = None
+        returnParameterList.append(returnParameter)
+    return returnParameterList
