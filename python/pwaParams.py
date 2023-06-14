@@ -104,18 +104,41 @@ def get_a(PPGmod,PPGbeat,y,opt_params,freq):
     second_deriv = helperFuns.deriv2(PPGmod)
     a = max(second_deriv)
     b = min(second_deriv)
-    
-    return p
+    t = np.arange(len(second_deriv))/freq
+    t_a = t[np.where(second_deriv == a)]
+    t_a = t_a[0]
+    t_b = t[np.where(second_deriv == b)]
+    t_b = t_b[0]
+    if t_a > t_b:
+        a = None
+    return a
 
 def get_b(PPGmod,PPGbeat,y,opt_params,freq):
-    second_deriv = helperFuns.deriv1(PPGmod)
-    p = max(first_deriv)
-    return p
+    second_deriv = helperFuns.deriv2(PPGmod)
+    a = max(second_deriv)
+    b = min(second_deriv)
+    t = np.arange(len(second_deriv))/freq
+    t_a = t[np.where(second_deriv == a)]
+    t_a = t_a[0]
+    t_b = t[np.where(second_deriv == b)]
+    t_b = t_b[0]
+    if t_a > t_b:
+        b = None
+    return b
 
 def get_b_a(PPGmod,PPGbeat,y,opt_params,freq):
-    second_deriv = helperFuns.deriv1(PPGmod)
-    p = max(first_deriv)
-    return p
+    second_deriv = helperFuns.deriv2(PPGmod)
+    a = max(second_deriv)
+    b = min(second_deriv)
+    b_a = b/a
+    t = np.arange(len(second_deriv))/freq
+    t_a = t[np.where(second_deriv == a)]
+    t_a = t_a[0]
+    t_b = t[np.where(second_deriv == b)]
+    t_b = t_b[0]
+    if t_a > t_b:
+        b_a = None
+    return b_a
 
 """
 statistical

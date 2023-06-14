@@ -21,7 +21,7 @@ if __name__ == "__main__":
     kernelTypes = 'Gauss';
     method = 'generic';
     normOut = False;
-    parameterList = ['P1'];
+    parameterList = ['a'];
     
     # include directories
     dataDirectory = '../data/' # directory where data folders are currently stored
